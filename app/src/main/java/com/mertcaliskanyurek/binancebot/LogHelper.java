@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import androidx.collection.ArraySet;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class LogHelper {
@@ -22,16 +23,17 @@ public class LogHelper {
 
     public void addlog(String log)
     {
-        Set<String> logs = getLogs();
+        SharedPreferences prefs = mContext.getSharedPreferences(NAME, Context.MODE_PRIVATE);
+        Set<String> logs = getLogs(prefs);
         logs.add(log);
-        SharedPreferences.Editor editor = mContext.getSharedPreferences(NAME, Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = prefs.edit();
         editor.putStringSet(KEY,logs);
-        editor.apply();
+        editor.commit();
     }
 
-    public Set<String> getLogs()
+    public Set<String> getLogs(SharedPreferences prefs)
     {
-        Set<String> def = new ArraySet<>();
-        return mContext.getSharedPreferences(NAME, Context.MODE_PRIVATE).getStringSet(KEY,def);
+        if(prefs == null) prefs = mContext.getSharedPreferences(NAME, Context.MODE_PRIVATE);
+        return prefs.getStringSet(KEY,new HashSet<>());
     }
 }
